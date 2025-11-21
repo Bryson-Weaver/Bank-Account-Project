@@ -1,69 +1,50 @@
-import java.math.BigDecimal;
-
 /*******************************************************************
 * Name: Bryson Weaver
 * Date: 11 / 13 / 2025
 * Week 1 Project Demo - Inheritance, Composition, and User Interactions
 *
-* CheckingAccount class extending Account class. 
+* CheckingAccount class extending BankAccount class. 
 * The CheckingAcccount class represents a checking account with attributes and behaviors for
 * checking accounts specifically, like an overdraft limit and an overdraft fee
 */
 
-public class CheckingAccount extends CustomerBankAccount { //demonstrating inheritance from CustomerAccount class
-    private double overdraftLimit;
-    private int overdraftFees;
-    private BigDecimal balance; // CheckingAccount maintains its own balance separate from the superclass
+public class CheckingAccount extends BankAccount implements ITransactable {
 
-    // Constructors to initialize CheckingAccount with customer name and optional initial balance
-    public CheckingAccount(Customer name) {
-        super(name, "Checking"); // keep superclass initialization (account number, owner, type)
-        this.overdraftLimit = 500.00; // Default overdraft limit
-        this.overdraftFees = 0;
-        this.balance = BigDecimal.ZERO;
-    }
-    // Get overdraft limit
-    public double getOverdraftLimit() {
-        return overdraftLimit;
-    }
-    // Set overdraft limit
-    public void setOverdraftLimit(double overdraftLimit) {
-        this.overdraftLimit = overdraftLimit;
-    }
-    // Get fees
-    public int getOverDraftFee() {
-        return overdraftFees;
-    }
-    // Set fees
-    public void setFees(int fees) {
-        this.overdraftFees = fees;
+    private final double overdraftLimit;
+    private final double overdraftFee;
+
+    public CheckingAccount(Customer owner) {
+        super(owner, "Checking");
+        this.overdraftLimit = 200.0; // unique property
+        this.overdraftFee = 35.0;    // unique property
     }
 
-    public String getAccountType() {
-        return "Checking";
+    @Override // overriding interface implemented method
+    public void deposit(double amount) {
+        if (amount > 0)
+            balance += amount;
     }
 
-    // CheckingAccount uses its own balance field
-    public BigDecimal getBalance() {
-        return balance;
-    }
+    @Override // overriding interface implemented method
+    public void withdraw(double amount) {
+        double maxWithdraw = balance + overdraftLimit;
 
-    public void setBalance(BigDecimal newBalance) {
-        this.balance = newBalance == null ? BigDecimal.ZERO : newBalance;
+        if (amount <= balance) {
+            balance -= amount;
+        }
+        else if (amount <= maxWithdraw) {
+            balance -= (amount + overdraftFee);
+            System.out.println("Checking overdraft used. Fee applied: $" + overdraftFee);
+        } 
+        else {
+            System.out.println("Withdrawal denied. Overdraft limit exceeded for Checking Account.");
+        }
     }
-
-    // Simple deposit/withdraw helpers that operate on this account's balance
-    public void deposit(BigDecimal amount) {
-        if (amount == null || amount.signum() <= 0) return;
-        this.balance = this.balance.add(amount);
-    }
-
 
     @Override
     public String toString() {
-        return String.format(
-                "(inherited) Account Number: %d\n(inherited) Account Owner Name: %s\n(inherited) Account Type: %s\nBalance: $%s\nOverdraft Limit: %.2f\nOverdraft Fees: %d",
-                getAccountNumber(), getCustomerName().getName(), getAccountType(), getBalance().toString(),
-                getOverdraftLimit(), getOverDraftFee());
+        return super.toString() +
+               "Overdraft Limit: $" + overdraftLimit + "\n" +
+               "Overdraft Fee: $" + overdraftFee + "\n";
     }
 }

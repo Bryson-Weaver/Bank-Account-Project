@@ -9,58 +9,105 @@
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) throws Exception {
-        Scanner input = new Scanner(System.in); // Scanner for user input
-        boolean accountFound = true; //while loop control variable
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
 
-        // informative header
-        System.out.println("Week 1 Project Demo - Inheritance, Composition, and User Interactions \nCreated by Bryson Weaver\n");
-        try {
-            while (accountFound) { //The block of code below will continue to run until the user enter enters their account or creates a new one
-                // Welcome message
-                System.out.println("Hello, welcome to my Bank Account Project!");
-                System.out.println("Do you have an existing account with us? (yes/no): ");
-                String hasAccount = input.nextLine().trim().toLowerCase(); // reads user input as one word, lowercase, with no spaces
+        System.out.println("Project week 2 - Bank Account Application\n Created by Bryson Weaver\n");
+        
+        System.out.println("Welcome to the Bank Account Application!");
+        System.out.print("You will create an account, be given a checking and savings account, ");
+        System.out.println("and perform transactions");
 
-                if (hasAccount.equals("yes")) {
-                    System.out.println("Welcome back! Please enter your customer account name: ");
-                    String accountName = input.nextLine().trim();
-                    // This is where we would check if the account is in a database / arrayList
-                    System.out.println("Account for " + accountName + " was found. You can now perform transactions.(not implemented yet)");
-                    accountFound = false;
-                } else if (hasAccount.equals("no")) {
-                    System.out.println("Let's create a new customer account for you.");
-                    //prompt the user to enter their name and email
-                    System.out.print("Please Enter your name: ");
-                    String name = input.nextLine().trim();
-                    System.out.print("Enter your email: ");
-                    String email = input.nextLine().trim();
-                    // instantiating a customer object with the name and email we got from the user as parameters
-                    Customer newCustomer = new Customer(name, email); 
-                    System.out.println("Account created successfully!\n");
-                    System.out.println("Here are your account details:\n" + newCustomer + "\n\n"); // displays the contents of the Customer class 
-                    System.out.println("Here is your checking account details:");
-                    CheckingAccount newCheckingAccount = new CheckingAccount(newCustomer); //instantiates a checking account object that uses the name from the customer as the parameter for the constructor
-                    //newCheckingAccount.deposit(new BigDecimal(100.00));
-                    System.out.println(newCheckingAccount); //displays the checking account information
-                    accountFound = false;
-                } else {
-                    System.out.println("Invalid input. Please restart and enter 'yes' or 'no'.");
-                    System.out.println(); // clear invalid input
-                }
+        System.out.print("Enter your name: ");
+        String name = input.nextLine();
+
+        System.out.print("Enter your email: ");
+        String email = input.nextLine();
+
+        Customer customer = new Customer(name, email);
+        CheckingAccount checking = new CheckingAccount(customer);
+        SavingsAccount savings = new SavingsAccount(customer);
+        
+        System.out.println("You now have a checking and savings account.");
+        // Menu loop 
+        boolean running = true;
+
+        while (running) {
+
+            System.out.println("\n=== Main Menu ===");
+            System.out.println("1. Deposit Money");
+            System.out.println("2. Withdraw Money");
+            System.out.println("3. View Account Details");
+            System.out.println("4. Exit Application");
+            System.out.print("Enter your choice: ");
+            System.out.println();
+
+            int action = input.nextInt();
+
+            switch (action) {
+                case 1:
+                    System.out.println("Please enter which account you want to deposit into: ");
+                    System.out.println("1. Checking Account");
+                    System.out.println("2. Savings Account");
+                    byte depositChoice = input.nextByte();
+                    
+                    // Polymorphism example:
+                    // Using ITransactable interface reference to hold the chosen account object
+                    ITransactable depositAccount;
+
+                    if (depositChoice == 1){
+                        depositAccount = checking;  // CheckingAccount implements ITransactable
+                    } else if (depositChoice == 2){
+                        depositAccount = savings;   // SavingsAccount implements ITransactable
+                    } else {
+                        System.out.println("Invalid Choice. Try again.");
+                        break;
+                    }
+                    System.out.println("Please enter deposit amount: ");
+                    double depositAmount = input.nextDouble();
+
+                    // Interface method call - polymorphism in action
+                    depositAccount.deposit(depositAmount);
+                    break;
+                case 2:
+                    System.out.println("Please enter which account you want to withdraw from: ");
+                    System.out.println("1. Checking Account");
+                    System.out.println("2. Savings Account");
+                    System.out.println();
+                    byte withdrawChoice = input.nextByte();
+
+                    // Polymorphism example:
+                    // Interface reference for withdrawal
+                    ITransactable withdrawAccount;
+
+                    if (withdrawChoice == 1){
+                        withdrawAccount = checking;
+                    } else if (withdrawChoice == 2){
+                        withdrawAccount = savings;
+                    } else {
+                        System.out.println("Invalid Choice. Try again.");
+                        break;
+                    }
+
+                    System.out.println("Please enter withdraw amount: ");
+                    double withdrawAmount = input.nextDouble();
+
+                    // Interface method call - polymorphism demonstrated
+                    withdrawAccount.withdraw(withdrawAmount);
+                    break;
+                case 3:
+                    System.out.println("\n--- Account Details ---");
+                    System.out.println(checking);
+                    System.out.println();
+                    System.out.println(savings);
+                    break;
+                case 4:
+                    System.out.println("Exiting program...");
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter 1-4.");
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Please enter valid input.");
         }
-        /*
-        System.out.println("Please choose from one of the options:");
-        System.out.println("1. Create checking account");
-        System.out.println("2. Create savings account");
-        System.out.println("3. Deposit into an account");
-        System.out.println("4. Withdraw from an account");
-        System.out.println("5. Fetch bank account details");
-        */
-        // close scanner to prevent resource leaks
-        input.close();
     }
 }

@@ -19,7 +19,7 @@ public class Customer {
         this.id = randomIDGenerator();
     }
     // 4 digit random ID generation
-    public int randomIDGenerator () {
+    public static int randomIDGenerator () {
         Random rand = new Random();
         return 1000 + rand.nextInt(9000);
     }
@@ -32,17 +32,6 @@ public class Customer {
     }
     public int getId() {
         return id; 
-    }
-    //setters for customer attributes
-    public void setName(String customerName) {
-        this.name = customerName;
-    }
-    public void setEmail(String customerEmail) {
-        this.email = customerEmail;
-    }
-    public void setNewID(int customerName) {
-        Random rand = new Random();
-        this.id = 1000 + rand.nextInt(9000);
     }
     // delete the customer account
     public void deleteAccount() {
