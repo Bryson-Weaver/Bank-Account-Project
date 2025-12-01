@@ -7,11 +7,12 @@
 import java.util.Random;
 
 public class BankAccount {
-    private final int accountNumber;
+    private final int accountNumber; // since acc num and owner are concrete, we make them final
     private final Customer owner;
     protected double balance;
-    protected String accountType;
+    protected String accountType; // we want these properties to be accessible to it subclasses
 
+    // this constructor only has parameters
     public BankAccount(Customer owner, String accountType) {
         this.owner = owner;
         this.accountType = accountType;
@@ -19,8 +20,7 @@ public class BankAccount {
         this.balance = 0.0;
     }
     public static int randomAccNumGenerator () {
-        Random rand = new Random();
-        return 1000 + rand.nextInt(9000);
+        return Customer.randomIDGenerator();
     }
 
     public int getAccountNumber() { return accountNumber; }

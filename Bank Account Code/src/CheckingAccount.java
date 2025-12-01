@@ -10,6 +10,7 @@
 
 public class CheckingAccount extends BankAccount implements ITransactable {
 
+    // both of these properties are set values, so they will be given the final access modifier
     private final double overdraftLimit;
     private final double overdraftFee;
 

@@ -11,8 +11,9 @@ import java.util.Random;
 public class Customer {
     private String name;
     private String email;
-    private int id; // e.g. customer id
+    private final int id; // we make this final since we don't want it to change
 
+    // the customer id is a random 4 digit integer that does not change, so we exclude it from the parameter list
     public Customer(String name, String email) {
         this.name = name;
         this.email = email;
