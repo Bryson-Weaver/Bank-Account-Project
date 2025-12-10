@@ -6,107 +6,141 @@
 * Main application class. This class is used to run the bank account
 * project demonstrating inheritance and composition concepts.
 */
+import java.sql.Connection;
 import java.util.Scanner;
 
 public class App {
+
     public static void main(String[] args) {
+
+        
         Scanner input = new Scanner(System.in);
+        String dbName = "bank.db";
+        Connection conn = SQLiteDatabase.connect(dbName);
+        System.out.println("Bryson Weaver Week 4 Banking Accounts Project ");
+        CustomerDAO customerDAO = new CustomerDAO();
+        AccountDAO accountDAO = new AccountDAO();
 
-        System.out.println("Project week 2 - Bank Account Application\n Created by Bryson Weaver\n");
-        
-        System.out.println("Welcome to the Bank Account Application!");
-        System.out.print("You will create an account, be given a checking and savings account, ");
-        System.out.println("and perform transactions");
+        CustomerDAO.createCustomerTable(conn);
+        AccountDAO.createAccountsTable(conn);
 
-        System.out.print("Enter your name: ");
-        String name = input.nextLine();
+        System.out.println("=== Simple Banking App ===");
 
-        System.out.print("Enter your email: ");
-        String email = input.nextLine();
+        while (true) {
+            System.out.println("\n1. Create Customer");
+            System.out.println("2. Create Account");
+            System.out.println("3. Deposit");
+            System.out.println("4. Withdraw");
+            System.out.println("5. View Account");
+            System.out.println("6. Exit");
+            System.out.print("Choose: ");
 
-        Customer customer = new Customer(name, email);
-        CheckingAccount checking = new CheckingAccount(customer);
-        SavingsAccount savings = new SavingsAccount(customer);
-        
-        System.out.println("You now have a checking and savings account.");
-        // Menu loop 
-        boolean running = true;
+            int choice = input.nextInt();
+            input.nextLine();
 
-        while (running) {
+            switch (choice) {
 
-            System.out.println("\n=== Main Menu ===");
-            System.out.println("1. Deposit Money");
-            System.out.println("2. Withdraw Money");
-            System.out.println("3. View Account Details");
-            System.out.println("4. Exit Application");
-            System.out.print("Enter your choice: ");
-            System.out.println();
+                case 1: {
+                    System.out.print("Customer Name: ");
+                    String name = input.nextLine();
+                    System.out.print("Email: ");
+                    String email = input.nextLine();
 
-            int action = input.nextInt();
+                    Customer c = new Customer(name, email);
+                    customerDAO.addCustomer(conn, c);
 
-            switch (action) {
-                case 1:
-                    System.out.println("Please enter which account you want to deposit into: ");
-                    System.out.println("1. Checking Account");
-                    System.out.println("2. Savings Account");
-                    byte depositChoice = input.nextByte();
-                    
-                    // Polymorphism example:
-                    // Using ITransactable interface reference to hold the chosen account object
-                    ITransactable depositAccount;
-
-                    if (depositChoice == 1){
-                        depositAccount = checking;  // CheckingAccount implements ITransactable
-                    } else if (depositChoice == 2){
-                        depositAccount = savings;   // SavingsAccount implements ITransactable
-                    } else {
-                        System.out.println("Invalid Choice. Try again.");
-                        break;
-                    }
-                    System.out.println("Please enter deposit amount: ");
-                    double depositAmount = input.nextDouble();
-
-                    // Interface method call - polymorphism in action
-                    depositAccount.deposit(depositAmount);
+                    System.out.println("Customer created with ID: " + c.getCustomerID());
                     break;
-                case 2:
-                    System.out.println("Please enter which account you want to withdraw from: ");
-                    System.out.println("1. Checking Account");
-                    System.out.println("2. Savings Account");
-                    System.out.println();
-                    byte withdrawChoice = input.nextByte();
+                }
 
-                    // Polymorphism example:
-                    // Interface reference for withdrawal
-                    ITransactable withdrawAccount;
+                case 2: {
+                    System.out.print("Customer ID: ");
+                    int custId = input.nextInt();
 
-                    if (withdrawChoice == 1){
-                        withdrawAccount = checking;
-                    } else if (withdrawChoice == 2){
-                        withdrawAccount = savings;
-                    } else {
-                        System.out.println("Invalid Choice. Try again.");
+                    Customer owner = customerDAO.getCustomerById(conn, custId);
+                    if (owner == null) {
+                        System.out.println("Customer not found.");
                         break;
                     }
 
-                    System.out.println("Please enter withdraw amount: ");
-                    double withdrawAmount = input.nextDouble();
+                    System.out.println("1. Checking");
+                    System.out.println("2. Savings");
+                    System.out.print("Account type: ");
+                    int t = input.nextInt();
 
-                    // Interface method call - polymorphism demonstrated
-                    withdrawAccount.withdraw(withdrawAmount);
+                    System.out.print("Starting Balance: ");
+                    double bal = input.nextDouble();
+
+                    BankAccount newAcc;
+
+                    if (t == 1) {
+                        newAcc = new CheckingAccount(owner, bal);
+                    } else {
+                        newAcc = new SavingsAccount(owner, bal);
+                    }
+
+                    accountDAO.addAccount(conn, newAcc);
+                    System.out.println("Account created!");
                     break;
-                case 3:
-                    System.out.println("\n--- Account Details ---");
-                    System.out.println(checking);
-                    System.out.println();
-                    System.out.println(savings);
+                }
+
+                case 3: {
+                    System.out.print("Account ID: ");
+                    int accId = input.nextInt();
+                    System.out.print("Amount: ");
+                    double amt = input.nextDouble();
+
+                    BankAccount acc = accountDAO.getAccount(conn, accId);
+                    if (acc == null) {
+                        System.out.println("Account not found.");
+                        break;
+                    }
+
+                    ITransactable tAcc = (ITransactable) acc;
+                    tAcc.deposit(amt);
+
+                    accountDAO.updateAccountBalance(conn, acc.getAccountID(), acc.getBalance());
+                    System.out.println("Deposit successful.");
                     break;
-                case 4:
-                    System.out.println("Exiting program...");
-                    running = false;
+                }
+
+                case 4: {
+                    System.out.print("Account ID: ");
+                    int accId = input.nextInt();
+                    System.out.print("Amount: ");
+                    double amt = input.nextDouble();
+
+                    BankAccount acc = accountDAO.getAccount(conn, accId);
+                    if (acc == null) {
+                        System.out.println("Account not found.");
+                        break;
+                    }
+
+                    ITransactable tAcc = (ITransactable) acc;
+                    tAcc.withdraw(amt);
+
+                    accountDAO.updateAccountBalance(conn, acc.getAccountID(), acc.getBalance());
                     break;
+                }
+
+                case 5: {
+                    System.out.print("Account ID: ");
+                    int accId = input.nextInt();
+
+                    BankAccount acc = accountDAO.getAccount(conn, accId);
+
+                    if (acc == null) System.out.println("Account not found.");
+                    else System.out.println("\n" + acc);
+
+                    break;
+                }
+
+                case 6:
+                    System.out.println("Goodbye!");
+                    return;
+
                 default:
-                    System.out.println("Invalid choice. Please enter 1-4.");
+                    System.out.println("Invalid option.");
             }
         }
     }

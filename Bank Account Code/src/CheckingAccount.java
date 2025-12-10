@@ -14,12 +14,17 @@ public class CheckingAccount extends BankAccount implements ITransactable {
     private final double overdraftLimit;
     private final double overdraftFee;
 
-    public CheckingAccount(Customer owner) {
-        super(owner, "Checking");
+    public CheckingAccount(int accountID, Customer owner, double bal) {
+        super(accountID, owner, "Checking", bal);
         this.overdraftLimit = 200.0; // unique property
         this.overdraftFee = 35.0;    // unique property
     }
 
+    public CheckingAccount(Customer owner, double bal) {
+        super(owner, "Checking", bal);
+        this.overdraftLimit = 200.0; // unique property
+        this.overdraftFee = 35.0;
+    }
     @Override // overriding interface implemented method
     public void deposit(double amount) {
         if (amount > 0)

@@ -4,26 +4,25 @@
  * Purpose: Simple parent class for Checking and Savings accounts.
  */
 
-import java.util.Random;
-
 public class BankAccount {
-    private final int accountNumber; // since acc num and owner are concrete, we make them final
+    private int accountID; // since acc num and owner are concrete, we make them final
     private final Customer owner;
     protected double balance;
-    protected String accountType; // we want these properties to be accessible to it subclasses
+    protected String accountType; // we want these properties to be accessible to it's subclasses
 
-    // this constructor only has parameters
-    public BankAccount(Customer owner, String accountType) {
+    public BankAccount(int accountID, Customer owner, String accountType, double bal) {
         this.owner = owner;
         this.accountType = accountType;
-        this.accountNumber = randomAccNumGenerator();
-        this.balance = 0.0;
+        this.accountID = accountID;
+        this.balance = bal;
     }
-    public static int randomAccNumGenerator () {
-        return Customer.randomIDGenerator();
+    public BankAccount(Customer owner, String accountType, double bal) {
+        this.owner = owner;
+        this.accountType = accountType;
+        this.balance = bal;
     }
-
-    public int getAccountNumber() { return accountNumber; }
+    public void setAccountID(int accID){ this.accountID = accID; }
+    public int getAccountID() { return accountID; }
     public String getAccountType() { return accountType; }
     public double getBalance() { return balance; }
     public Customer getOwner() { return owner; }
@@ -31,9 +30,8 @@ public class BankAccount {
     @Override
     public String toString() {
         return "Account Type: " + accountType +
-               "\nAccount Number: " + accountNumber +
-               "\nOwner: " + owner.getName() +
+               "\nAccount ID: " + accountID +
+               "\nOwner: " + owner.getCustomerName() +
                "\nBalance: $" + balance + "\n";
     }
 }
-

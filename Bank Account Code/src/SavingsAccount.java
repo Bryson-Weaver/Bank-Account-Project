@@ -11,10 +11,14 @@ public class SavingsAccount extends BankAccount implements ITransactable {
 
     private final double interestRate; // since the interest rate is a set value, we make it final
 
-    // this constructor is given only one parameter, and is given default values for the other properties
+    // this constructor is given only two parameters, and is given default values for the other properties
 
-    public SavingsAccount(Customer owner) { //demonstrates composition by using the                                             
-        super(owner, "Savings"); //customer class value as the parameter for the constructor
+    public SavingsAccount(int accountID, Customer owner, double bal) { //demonstrates composition by using the customer class                                         
+        super(accountID, owner, "Savings", bal); //customer class value as the parameter for the constructor
+        this.interestRate = 0.02; // 2% interest
+    }
+    public SavingsAccount(Customer owner, double bal) {
+        super(owner, "Savings", bal); 
         this.interestRate = 0.02; // 2% interest
     }
 

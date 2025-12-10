@@ -6,39 +6,44 @@
 * The Customer class represents a bank customer with basic attributes like name, email, and ID.
 * it is used in composition with Account classes to associate customers with their accounts.
 */
-import java.util.Random;
 
 public class Customer {
     private String name;
     private String email;
-    private final int id; // we make this final since we don't want it to change
+    private int id; 
 
-    // the customer id is a random 4 digit integer that does not change, so we exclude it from the parameter list
-    public Customer(String name, String email) {
+    // the customer id is a assigned in the database
+    public Customer(int id, String name, String email) {
         this.name = name;
         this.email = email;
-        this.id = randomIDGenerator();
+        this.id = id;
     }
-    // 4 digit random ID generation
-    public static int randomIDGenerator () {
-        Random rand = new Random();
-        return 1000 + rand.nextInt(9000);
+
+    
+    public Customer(String name, String email){
+        this.id = -1;
+        this.name = name;
+        this.email = email;
+    }
+
+    public void setCustomerID(int id){
+        this.id = id;
     }
     // Getters for Customer attributes
-    public String getName() {
+    public String getCustomerName() {
         return name; 
     }
-    public String getEmail() { 
+    public void setCustomerName(String n){
+        this.name = n;
+    }
+    public String getCustomerEmail() { 
         return email; 
     }
-    public int getId() {
-        return id; 
+    public void setCustomerEmail(String e){
+        this.email = e;
     }
-    // delete the customer account
-    public void deleteAccount() {
-        this.name = null;
-        this.email = null;
-        this.id = 0;
+    public int getCustomerID() {
+        return id; 
     }
 
     // Override toString for easy display of customer information
