@@ -1,7 +1,7 @@
 # Project Name: Bank Account Project
 
 ## Project Description
-This application simulates a real-world banking system. It incorporates core Object-Oriented Programming (OOP) principles—such as inheritance, polymorphism, abstraction, and encapsulation—to model customers, accounts, and financial transactions. The project also includes a SQLite database for persistent storage of customer and account data.
+This application simulates a real-world banking system. It incorporates core Object-Oriented Programming (OOP) principles, such as inheritance, polymorphism, abstraction, and encapsulation—to model customers, accounts, and financial transactions. The project also includes a SQLite database for persistent storage of customer and account data.
 
 
 
